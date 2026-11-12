@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="corporate">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Генератор отмазок</title>
+<style>
+  :root, [data-theme="corporate"] {
+    --bg: #F5F7FA;
+    --card-bg: #FFFFFF;
+    --text: #2D3748;
+    --text-muted: #718096;
+    --btn-primary: #3182CE;
+    --btn-primary-hover: #2C5282;
+    --btn-secondary: #E2E8F0;
+    --success: #48BB78;
+    --accent: #3182CE;
+    --border-radius: 14px;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  [data-theme="tyler"] {
+    --bg: #1A1A1A;
+    --card-bg: #2D2D2D;
+    --text: #E0E0E0;
+    --text-muted: #9E9E9E;
+    --btn-primary: #D32F2F;
+    --btn-primary-hover: #B71C1C;
+    --btn-secondary: #424242;
+    --success: #FFC107;
+    --accent: #FFC107;
+    --border-radius: 2px;
+    --font: 'Courier New', monospace;
+    --shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+    padding: 20px;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  .container { max-width: 640px; margin: 0 auto; }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding: 16px 0;
+  }
+
+  .logo {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  [data-theme="tyler"] .logo {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+  }
+
+  .theme-switch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .theme-switch-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  [data-theme="tyler"] .theme-switch-label {
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .toggle {
+    width: 52px;
+    height: 28px;
+    background: var(--btn-secondary);
+    border-radius: 14px;
+    position: relative;
+    transition: background 0.3s;
+  }
+
+  [data-theme="tyler"] .toggle {
+    background: #424242;
+    border: 1px solid var(--btn-primary);
+  }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: var(--btn-primary);
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  [data-theme="tyler"] .toggle::after {
+    transform: translateX(24px);
+    border-radius: 2px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    transition: all 0.4s ease;
+  }
+
+  [data-theme="tyler"] .card {
+    border: 1px solid #3D3D3D;
+    box-shadow: none;
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  [data-theme="tyler"] .card-title {
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+  }
+
+  .form-group { margin-bottom: 16px; }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  select, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--btn-secondary);
+    border-radius: var(--border-radius);
+    font-family: var(--font);
+    font-size: 15px;
+    transition: all 0.2s;
+  }
+
+  select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--btn-primary);
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  .btn {
+    padding: 14px 28px;
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: var(--border-radius);
+    width: 100%;
+  }
+
+  .btn-primary {
+    background: var(--btn-primary);
+    color: #FFFFFF;
+  }
+
+  .btn-primary:hover {
+    background: var(--btn-primary-hover);
+    transform: translateY(-1px);
+  }
+
+  [data-theme="tyler"] .btn-primary {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 22px 36px;
+    border-radius: 0;
+    clip-path: polygon(
+      0% 10%, 2% 0%, 10% 6%, 18% 0%, 28% 4%, 38% 0%,
+      48% 7%, 58% 0%, 68% 5%, 78% 0%, 88% 6%, 96% 0%, 100% 12%,
+      100% 28%, 97% 42%, 100% 58%, 98% 72%, 100% 86%, 97% 100%,
+      88% 94%, 78% 100%, 68% 95%, 58% 100%, 48% 93%, 38% 100%,
+      28% 96%, 18% 100%, 10% 94%, 2% 100%, 0% 88%,
+      3% 72%, 0% 58%, 2% 42%, 0% 28%
+    );
+  }
+
+  [data-theme="tyler"] .btn-primary:hover {
+    background: var(--btn-primary-hover);
+    transform: none;
+    animation: shake 0.3s ease-in-out;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(-2px, 1px) rotate(-0.5deg); }
+    50% { transform: translate(2px, -1px) rotate(0.5deg); }
+    75% { transform: translate(-1px, 2px) rotate(-0.3deg); }
+  }
+
+  .result-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent);
+    animation: slideIn 0.4s ease-out;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  [data-theme="tyler"] .result-card {
+    border: 1px solid #3D3D3D;
+    border-left: 4px solid var(--btn-primary);
+  }
+
+  .result-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  .result-text {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 14px;
+    white-space: pre-wrap;
+  }
+
+  .result-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .credibility {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: var(--btn-secondary);
+    color: var(--text);
+  }
+
+  [data-theme="tyler"] .credibility {
+    background: var(--btn-primary);
+    color: #fff;
+    border-radius: 0;
+  }
+
+  .copy-btn {
+    background: transparent;
+    border: 1px solid var(--btn-primary);
+    color: var(--btn-primary);
+    padding: 6px 14px;
+    border-radius: var(--border-radius);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover {
+    background: var(--btn-primary);
+    color: #fff;
+  }
+
+  .copy-btn.copied {
+    background: var(--success);
+    color: #fff;
+    border-color: var(--success);
+  }
+
+  .tyler-task {
+    background: #1A1A1A;
+    border: 2px dashed var(--btn-primary);
+    color: var(--text);
+    padding: 20px;
+    border-radius: 0;
+    margin-top: 20px;
+    animation: flicker 2s infinite;
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.92; }
+  }
+
+  .tyler-task-title {
+    color: var(--btn-primary);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    font-weight: 800;
+  }
+
+  .tyler-task-text {
+    font-size: 14px;
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  .tyler-quote {
+    background: var(--card-bg);
+    border-left: 4px solid var(--btn-primary);
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .tyler-quote::before { content: '« '; color: var(--btn-primary); font-size: 24px; font-weight: bold; }
+  .tyler-quote::after { content: ' »'; color: var(--btn-primary); font-size: 24px; font-weight: bold; }
+
+  .hidden { display: none; }
+
+  .disclaimer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 32px;
+    padding: 16px;
+    opacity: 0.7;
+  }
+
+  .regen-hint {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: -10px;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="logo" id="logo">Генератор отмазок</div>
+    <div class="theme-switch" id="themeSwitch">
+      <span class="theme-switch-label" id="themeLabel">Тайлер</span>
+      <div class="toggle"></div>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="card-title" id="formTitle">Опиши ситуацию</div>
+
+    <div class="form-group">
+      <label>Кому пишем?</label>
+      <select id="recipient">
+        <option value="boss">Начальнику</option>
+        <option value="client">Клиенту</option>
+        <option value="colleague">Коллеге</option>
+        <option value="teacher">Преподавателю</option>
+        <option value="friend">Другу</option>
+        <option value="partner">Партнёру / второй половинке</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Что нужно?</label>
+      <select id="goal">
+        <option value="late">Опоздать</option>
+        <option value="reschedule">Перенести встречу</option>
+        <option value="refuse">Отказаться</option>
+        <option value="missed">Объяснить, что забыл/не сделал</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Реальная причина (коротко)</label>
+      <textarea id="realReason" placeholder="Например: просрал всё, что можно..."></textarea>
+    </div>
+
+    <button class="btn btn-primary" id="generateBtn">Сгенерировать</button>
+  </div>
+
+  <div id="results" class="hidden"></div>
+
+  <div class="disclaimer">
+    Работает без интернета · Тысячи уникальных комбинаций · Используй ответственно
+  </div>
+</div>
+
+<script>
+  // ===== ПЕРЕКЛЮЧЕНИЕ ТЕМЫ =====
+  const themeSwitch = document.getElementById('themeSwitch');
+  const html = document.documentElement;
+  const logo = document.getElementById('logo');
+  const themeLabel = document.getElementById('themeLabel');
+  const formTitle = document.getElementById('formTitle');
+
+  themeSwitch.addEventListener('click', () => {
+    const isTyler = html.getAttribute('data-theme') === 'tyler';
+    html.setAttribute('data-theme', isTyler ? 'corporate' : 'tyler');
+    logo.textContent = isTyler ? 'Генератор отмазок' : 'ПРОЕКТ РАЗГРОМ';
+    themeLabel.textContent = isTyler ? 'Тайлер' : 'Корп. режим';
+    formTitle.textContent = isTyler ? 'Опиши ситуацию' : 'ЧТО СЛУЧИЛОСЬ, ЧУВАК?';
+
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = isTyler ? 200 : 800;
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.1);
+    } catch(e) {}
+  });
+
+  // ===== УТИЛИТЫ =====
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+  // ===== АНАЛИЗ ПРИЧИНЫ =====
+  function analyzeReason(reason) {
+    if (!reason || reason.trim().length < 3) return 'unknown';
+    const r = reason.toLowerCase();
+    const categories = {
+      'sleep': ['проспал', 'спал', 'будильник', 'не выспал', 'устал', 'выгор', 'нет сил', 'лениво', 'лень', 'не хочу вставать'],
+      'party': ['пил', 'алкогол', 'похмель', 'тусил', 'вечеринк', 'бар', 'клуб', 'гулял', 'набухал'],
+      'games': ['играл', 'игр', 'доту', 'кс', 'playstation', 'приставку', 'сериал', 'нетфликс', 'youtube', 'залип'],
+      'health': ['бол', 'температур', 'простуд', 'отравл', 'тошн', 'голова', 'живот', 'аллерг', 'врач', 'больниц'],
+      'transport': ['пробк', 'транспорт', 'метро', 'автобус', 'маршрутк', 'такси', 'машина', 'сломал', 'авари', 'дорог'],
+      'family': ['семь', 'мама', 'папа', 'родител', 'ребенок', 'дет', 'жена', 'муж', 'брат', 'сестр'],
+      'mood': ['депрес', 'грустн', 'плохое настроен', 'нет настроен', 'не хочу', 'не могу', 'стресс', 'тревог', 'паник'],
+      'honest': ['забил', 'похуй', 'не хочу', 'не интересно', 'бесит', 'ненавиж', 'достал', 'надоел']
+    };
+    for (const [cat, kws] of Object.entries(categories)) {
+      if (kws.some(kw => r.includes(kw))) return cat;
+    }
+    return 'custom';
+  }
+
+  // ===== БАЗА ДЕТАЛЕЙ ПО ПРИЧИНЕ =====
+  const reasonDetails = {
+    sleep: {
+      corporate: [
+        'плохое самочувствие с утра', 'не выспался из-за мигрени', 'семейные обстоятельства',
+        'бытовой форс-мажор', 'проблемы со здоровьем', 'неожиданная слабость',
+        'срочные дела дома', 'не рассчитал время на сборы', 'задержка по личным обстоятельствам',
+        'непредвиденные утренние сложности'
+      ],
+      tyler: [
+        'моё тело отказалось быть рабом будильника', 'я chose сон вместо твоей системы KPI',
+        'я не машина, я человек', 'моя душа ещё не готова к корпоративному рабству',
+        'я восстанавливаю то, что у тебя отняла работа', 'я слушаю своё тело, а не твой календарь',
+        'я не опаздываю — я прихожу осознанно', 'сон — это не лень, это сопротивление'
+      ]
+    },
+    party: {
+      corporate: [
+        'пищевое отравление', 'проблемы с ЖКТ', 'острая реакция на еду',
+        'внезапное недомогание', 'аллергическая реакция', 'проблемы с желудком',
+        'срочный визит к врачу', 'неожиданное отравление'
+      ],
+      tyler: [
+        'я вчера был жив, а не функционировал', 'я пил, и мне не стыдно — стыд это инструмент контроля',
+        'я выбрал жизнь, а не работу', 'вчерашняя ночь была реальной, сегодня — цена',
+        'я не буду врать про "отравление" — я пил и кайфовал', 'я восстанавливаюсь после того, как был собой',
+        'алкоголь — это не проблема, проблема — твоя реакция'
+      ]
+    },
+    games: {
+      corporate: [
+        'проблемы с интернетом ночью', 'семейные обстоятельства', 'бытовой форс-мажор',
+        'непредвиденные технические сложности', 'задержка по личным делам',
+        'срочный вопрос, требующий внимания'
+      ],
+      tyler: [
+        'я играл, и это было осмысленнее половины моих рабочих дней',
+        'я был в другом мире — реальнее этого', 'я chose виртуальную войну вместо реальной рутины',
+        'моя игра — не твоя проблема', 'я не раб продуктивности',
+        'в игре я был героем, здесь — винтик', 'я выбираю, на что тратить своё время'
+      ]
+    },
+    health: {
+      corporate: [
+        'высокая температура', 'острая вирусная инфекция', 'сильная мигрень',
+        'обострение хронического заболевания', 'необходимость срочного визита к врачу',
+        'плохое самочувствие', 'острое недомогание'
+      ],
+      tyler: [
+        'моё тело сказало "нет" твоей системе', 'я не буду жертвовать здоровьем ради дедлайна',
+        'болезнь — это не повод извиняться', 'моё тело слабее твоих KPI, и это нормально',
+        'я слушаю своё тело, а не твой календарь', 'здоровье — это не роскошь, это право'
+      ]
+    },
+    transport: {
+      corporate: [
+        'ДТП на маршруте', 'сломался транспорт', 'пробки из-за аварии',
+        'отмена рейса/маршрута', 'технические проблемы с транспортом',
+        'непредвиденные дорожные сложности', 'задержка общественного транспорта'
+      ],
+      tyler: [
+        'я застрял в пробке — метафоре вашей жизни', 'транспорт — это клетка, в которой я сегодня застрял',
+        'дорога — это время, которое у меня украли', 'я не опаздываю, это система опаздывает для меня',
+        'пробки — это медитация, которую вы мне навязали'
+      ]
+    },
+    family: {
+      corporate: [
+        'срочные семейные обстоятельства', 'проблемы у ребёнка', 'необходимость помочь родственникам',
+        'семейный форс-мажор', 'требует моего личного присутствия',
+        'неотложные домашние дела', 'семейный вопрос'
+      ],
+      tyler: [
+        'семья важнее твоей работы', 'я выбираю близких, а не дедлайны',
+        'семья — это реальность, работа — иллюзия', 'мои близкие нуждаются во мне, а твой проект — нет',
+        'я не буду выбирать между семьёй и работой'
+      ]
+    },
+    mood: {
+      corporate: [
+        'плохое самочувствие', 'необходимо время на восстановление', 'непредвиденные обстоятельства',
+        'вынужден взять паузу', 'не готов к полноценной работе',
+        'необходимо прийти в себя', 'форс-мажор'
+      ],
+      tyler: [
+        'я не в ресурсе, и я не буду притворяться', 'выгорание — это не лень, это сигнал',
+        'я выбираю себя, а не твою продуктивность', 'система учит скрывать усталость — я отказываюсь',
+        'моя душа требует паузы', 'я не робот, я человек'
+      ]
+    },
+    honest: {
+      corporate: [
+        'не готов к задаче', 'необходимо больше времени', 'не рассчитал силы',
+        'нужна дополнительная проработка', 'не удалось в срок',
+        'потребовалось больше внимания', 'непредвиденные сложности'
+      ],
+      tyler: [
+        'мне плевать, и я больше не притворяюсь', 'я забил, и это мой выбор',
+        'я не буду врать про "сложности" — я просто не хотел', 'я chose себя, а не твою задачу',
+        'лишь утратив всё, мы обретаем свободу', 'я свободен от твоих ожиданий'
+      ]
+    },
+    custom: {
+      corporate: [
+        'непредвиденные обстоятельства', 'форс-мажор', 'срочные дела',
+        'требует моего внимания', 'непредвиденные сложности',
+        'личные обстоятельства', 'бытовой вопрос'
+      ],
+      tyler: [
+        'я не буду объяснять — объяснения для слабых', 'моя причина — не твоя проблема',
+        'я выбираю себя, а не твои ожидания', 'я свободен от отчётов',
+        'я не раб расписания', 'причина — я сам'
+      ]
+    },
+    unknown: {
+      corporate: [
+        'непредвиденные обстоятельства', 'форс-мажор', 'срочные дела',
+        'личные обстоятельства', 'бытовой вопрос', 'непредвиденные сложности'
+      ],
+      tyler: [
+        'я не буду объяснять', 'моя причина — не твоя проблема',
+        'я выбираю себя', 'я свободен', 'я не раб расписания'
+      ]
+    }
+  };
+
+  // ===== ШАБЛОНЫ ПО СИТУАЦИИ И ПОЛУЧАТЕЛЮ =====
+  const templates = {
+    corporate: {
+      late: {
+        boss: [
+          (d, t) => `Доброе утро! Прошу прощения, ${d}. Задержусь на ${t} минут. Буду на связи.`,
+          (d, t) => `Коллеги, извините — ${d}. Подключусь онлайн, к ${t} буду в офисе.`,
+          (d, t) => `Прошу прощения за задержку. ${d.charAt(0).toUpperCase() + d.slice(1)}. Через ${t} минут буду.`,
+          (d, t) => `Доброе утро! ${d.charAt(0).toUpperCase() + d.slice(1)}, поэтому задержусь. Ориентировочно ${t} минут.`,
+          (d, t) => `Извините, ${d}. Буду позже, на связи в мессенджере.`
+        ],
+        client: [
+          (d, t) => `Добрый день! Приношу извинения, ${d}. Задержусь на ${t} минут. Начнём сразу, как буду готов.`,
+          (d, t) => `Здравствуйте! Прошу прощения — ${d}. Через ${t} минут буду на связи.`,
+          (d, t) => `Коллеги, прошу извинить. ${d.charAt(0).toUpperCase() + d.slice(1)}. Подключусь в течение ${t} минут.`,
+          (d, t) => `Добрый день! ${d.charAt(0).toUpperCase() + d.slice(1)}, поэтому немного задержусь. Буду через ${t} минут.`,
+          (d, t) => `Извините за ожидание — ${d}. Скоро буду.`
+        ],
+        colleague: [
+          (d, t) => `Привет! ${d.charAt(0).toUpperCase() + d.slice(1)}, задержусь на ${t} минут. Начинай без меня.`,
+          (d, t) => `Слушай, ${d}. Буду через ${t} минут. Если срочно — пиши в телегу.`,
+          (d, t) => `Привет, задерживаюсь — ${d}. Жди меня ${t} минут максимум.`,
+          (d, t) => `Привет! ${d.charAt(0).toUpperCase() + d.slice(1)}, буду позже. Через ${t} минут подъеду.`,
+          (d, t) => `Опаздываю немного — ${d}. Через ${t} минут буду.`
+        ],
+        teacher: [
+          (d, t) => `Извините, ${d}. Задержусь на ${t} минут. Войду тихо, чтобы не мешать.`,
+          (d, t) => `Прошу прощения — ${d}. Буду к ${t}-му минуту занятия.`,
+          (d, t) => `Извините за опоздание. ${d.charAt(0).toUpperCase() + d.slice(1)}. Скоро буду.`,
+          (d, t) => `Прошу прощения, ${d}. Задержусь, но обязательно приду.`
+        ],
+        friend: [
+          (d, t) => `Братан, ${d}. Задержусь на ${t} минут. Начинайте без меня!`,
+          (d, t) => `Слушай, ${d}. Буду через ${t} минут. Не ждите.`,
+          (d, t) => `Опаздываю — ${d}. Через ${t} минут буду, заказывайте без меня.`,
+          (d, t) => `Бро, ${d}. Ща буду, ${t} минут максимум.`,
+          (d, t) => `Извини, ${d}. Через ${t} минут подъеду.`
+        ],
+        partner: [
+          (d, t) => `Любимый/ая, ${d}. Задержусь на ${t} минут. Скучаю, скоро буду!`,
+          (d, t) => `Малыш, ${d}. Буду через ${t} минут. Не жди меня.`,
+          (d, t) => `Солнце, ${d}. Задержусь, но скоро буду. Люблю!`,
+          (d, t) => `Родной/ая, ${d}. Через ${t} минут буду, не переживай.`
+        ]
+      },
+      reschedule: {
+        boss: [
+          (d) => `Добрый день! ${d.charAt(0).toUpperCase() + d.slice(1)}. Прошу перенести встречу на завтра — так смогу уделить ей должное внимание.`,
+          (d) => `К сожалению, ${d}. Давайте перенесём наш созвон? Подготовлюсь качественнее.`,
+          (d) => `Прошу прощения, но вынужден попросить о переносе. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Добрый день! В связи с тем, что ${d}, прошу перенести встречу.`,
+          (d) => `Извините, ${d}. Можем сдвинуть на другое время?`
+        ],
+        client: [
+          (d) => `Добрый день! В целях обеспечения максимального качества подготовки, предлагаю перенести встречу. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Здравствуйте! Появилась необходимость перенести наш созвон. ${d.charAt(0).toUpperCase() + d.slice(1)}. Удобно ли вам в другое время?`,
+          (d) => `Прошу прощения, вынужден попросить о переносе. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Добрый день! ${d.charAt(0).toUpperCase() + d.slice(1)}, поэтому предлагаю перенести. Когда вам удобно?`
+        ],
+        colleague: [
+          (d) => `Привет! Можем перенести? ${d.charAt(0).toUpperCase() + d.slice(1)}, не смогу нормально включиться.`,
+          (d) => `Слушай, давай сдвинем? ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Привет, не получится сегодня. ${d.charAt(0).toUpperCase() + d.slice(1)}. Давай на завтра?`,
+          (d) => `Привет! ${d.charAt(0).toUpperCase() + d.slice(1)}, давай перенесём.`
+        ],
+        teacher: [
+          (d) => `Уважаемый преподаватель, прошу прощения, но вынужден попросить о переносе. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Извините, не смогу присутствовать. ${d.charAt(0).toUpperCase() + d.slice(1)}. Могу ли я подойти в другой день?`,
+          (d) => `Прошу перенести встречу. ${d.charAt(0).toUpperCase() + d.slice(1)}.`
+        ],
+        friend: [
+          (d) => `Слушай, давай перенесём? ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Не сегодня, брат. ${d.charAt(0).toUpperCase() + d.slice(1)}. Давай на выходные?`,
+          (d) => `Перенесём? ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Бро, давай в другой раз. ${d.charAt(0).toUpperCase() + d.slice(1)}.`
+        ],
+        partner: [
+          (d) => `Малыш, давай перенесём? ${d.charAt(0).toUpperCase() + d.slice(1)}. Завтра всё отменю ради тебя.`,
+          (d) => `Солнце, не сегодня. ${d.charAt(0).toUpperCase() + d.slice(1)}. Давай в выходные?`,
+          (d) => `Любимый/ая, перенесём? ${d.charAt(0).toUpperCase() + d.slice(1)}.`
+        ]
+      },
+      refuse: {
+        boss: [
+          (d) => `Спасибо за предложение. К сожалению, ${d}, поэтому не смогу взять дополнительную нагрузку.`,
+          (d) => `Благодарю за доверие. ${d.charAt(0).toUpperCase() + d.slice(1)}, поэтому вынужден отказаться.`,
+          (d) => `Ценю приглашение, но ${d}. На данный момент не смогу участвовать.`,
+          (d) => `Спасибо, но ${d}. Готов вернуться к вопросу позже.`
+        ],
+        client: [
+          (d) => `Благодарим за интерес. ${d.charAt(0).toUpperCase() + d.slice(1)}, поэтому не сможем рассмотреть предложение.`,
+          (d) => `Спасибо за обращение. ${d.charAt(0).toUpperCase() + d.slice(1)}. Будем рады вернуться позже.`,
+          (d) => `Ценим ваше предложение, но ${d}.`,
+          (d) => `Благодарим, но ${d}. Сохраним в приоритете на следующий период.`
+        ],
+        colleague: [
+          (d) => `Привет! Спасибо, что позвал, но ${d}.`,
+          (d) => `Слушай, не смогу. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Пас сегодня. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Не сегодня, ${d}.`
+        ],
+        teacher: [
+          (d) => `К сожалению, не смогу принять участие. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Извините, не получится. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Не смогу, извините. ${d.charAt(0).toUpperCase() + d.slice(1)}.`
+        ],
+        friend: [
+          (d) => `Слушай, сегодня пас. ${d.charAt(0).toUpperCase() + d.slice(1)}. В другой раз!`,
+          (d) => `Не пойду, извини. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Не, брат, не сегодня. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Пас. ${d.charAt(0).toUpperCase() + d.slice(1)}.`
+        ],
+        partner: [
+          (d) => `Солнце, сегодня не смогу. ${d.charAt(0).toUpperCase() + d.slice(1)}. Давай в выходные с лихвой?`,
+          (d) => `Не сегодня, извини. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Не могу, прости. ${d.charAt(0).toUpperCase() + d.slice(1)}.`
+        ]
+      },
+      missed: {
+        boss: [
+          (d) => `Прошу прощения — ${d}. Беру в работу сегодня, результат будет до конца дня.`,
+          (d) => `Приношу извинения. ${d.charAt(0).toUpperCase() + d.slice(1)}. Уточню статус и вернусь с планом.`,
+          (d) => `Признаю, что упустил. ${d.charAt(0).toUpperCase() + d.slice(1)}. Сейчас активно работаю.`,
+          (d) => `Извините, ${d}. Результат предоставлю до конца дня.`
+        ],
+        client: [
+          (d) => `Приношу извинения за задержку. ${d.charAt(0).toUpperCase() + d.slice(1)}. Результат предоставлю сегодня.`,
+          (d) => `Прошу прощения. ${d.charAt(0).toUpperCase() + d.slice(1)}. Уточняю детали и вернусь с обновлением.`,
+          (d) => `Благодарю за терпение. ${d.charAt(0).toUpperCase() + d.slice(1)}. Задача в приоритете.`
+        ],
+        colleague: [
+          (d) => `Слушай, ${d}. Сейчас сделаю, через час будет.`,
+          (d) => `Прости, ${d}. Включаю в приоритет, сегодня закрою.`,
+          (d) => `Мой косяк — ${d}. Сейчас исправлю.`
+        ],
+        teacher: [
+          (d) => `Прошу прощения, ${d}. Готов сдать в ближайшее время.`,
+          (d) => `Извините, ${d}. Когда можно сдать?`,
+          (d) => `Не успел, извините. ${d.charAt(0).toUpperCase() + d.slice(1)}.`
+        ],
+        friend: [
+          (d) => `Блин, ${d}. Сейчас сделаю, извини!`,
+          (d) => `Зашил, прости. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d) => `Мой косяк — ${d}. Сейчас исправлю.`
+        ],
+        partner: [
+          (d) => `Прости, ${d}. Сейчас исправлю, ты у меня самый важный человек.`,
+          (d) => `Извини, ${d}. Сделаю ASAP, обещаю.`,
+          (d) => `Прости, ${d}. Сейчас всё исправлю.`
+        ]
+      }
+    },
+    tyler: {
+      late: {
+        boss: [
+          (d, t) => `Я не опаздываю. ${d.charAt(0).toUpperCase() + d.slice(1)}. Буду, когда буду.`,
+          (d, t) => `Первое правило: я не объясняю, почему меня нет. Второе правило: Я НЕ ОБЪЯСНЯЮ. ${d.charAt(0).toUpperCase() + d.slice(1)}.`,
+          (d, t) => `Ты не твоя работа. ${d.charAt(0).toUpperCase() + d.slice(1)}. И моя задержка — не твоя проблема.`,
+          (d, t) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Я выбираю себя, а не твои дедлайны.`,
+          (d, t) => `Не приду вовремя. ${d.charAt(0).toUpperCase() + d.slice(1)}. Если это проблема — может, это не моя работа.`
+        ],
+        client: [
+          (d, t) => `Я не опаздываю на наш звонок. ${d.charAt(0).toUpperCase() + d.slice(1)}. Скоро буду, если решу прийти.`,
+          (d, t) => `Задерживаюсь. ${d.charAt(0).toUpperCase() + d.slice(1)}. Время — иллюзия, дедлайны — способ контроля.`,
+          (d, t) => `Буду позже. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я вне контроля.`,
+          (d, t) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Я выбираю, когда приходить.`
+        ],
+        colleague: [
+          (d, t) => `Опаздываю. ${d.charAt(0).toUpperCase() + d.slice(1)}. Ты не твоя работа, и я не моё опоздание.`,
+          (d, t) => `Задерживаюсь. ${d.charAt(0).toUpperCase() + d.slice(1)}. Начинайте без меня. Или не начинайте.`,
+          (d, t) => `Буду позже. ${d.charAt(0).toUpperCase() + d.slice(1)}. И не спрашивай почему.`,
+          (d, t) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Я не раб расписания.`
+        ],
+        teacher: [
+          (d, t) => `Опаздываю. ${d.charAt(0).toUpperCase() + d.slice(1)}. Система учит приходить вовремя. Я учусь приходить осознанно.`,
+          (d, t) => `Буду позже. ${d.charAt(0).toUpperCase() + d.slice(1)}. Время — социальный конструкт.`,
+          (d, t) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Я вне конструкта.`
+        ],
+        friend: [
+          (d, t) => `Опаздываю. ${d.charAt(0).toUpperCase() + d.slice(1)}. Впервые за долгое время делал то, что хочу.`,
+          (d, t) => `Задерживаюсь. ${d.charAt(0).toUpperCase() + d.slice(1)}. Мне всё равно, но я люблю вас.`,
+          (d, t) => `Буду позже. ${d.charAt(0).toUpperCase() + d.slice(1)}. Ты мой друг, ты поймёшь.`,
+          (d, t) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Не ждите.`
+        ],
+        partner: [
+          (d, t) => `Опаздываю. ${d.charAt(0).toUpperCase() + d.slice(1)}. Любовь — реальна, время — иллюзия. Скоро увидимся.`,
+          (d, t) => `Задерживаюсь. ${d.charAt(0).toUpperCase() + d.slice(1)}. Ты не моя работа, и я не твоё опоздание.`,
+          (d, t) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Скоро буду, родной/ая.`
+        ]
+      },
+      reschedule: {
+        boss: [
+          (d) => `Встреча отменяется. ${d.charAt(0).toUpperCase() + d.slice(1)}. Переносим на когда-нибудь, когда оба перестанем врать себе.`,
+          (d) => `Давай перенесём. ${d.charAt(0).toUpperCase() + d.slice(1)}. Время — единственный невозобновляемый ресурс.`,
+          (d) => `Не сегодня. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я занят тем, что вспоминаю, кто я вне этой компании.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Переносим. Я выбираю себя.`
+        ],
+        client: [
+          (d) => `Переносим. ${d.charAt(0).toUpperCase() + d.slice(1)}. Вы платите за результат, а не за присутствие на созвоне.`,
+          (d) => `Отменяю. ${d.charAt(0).toUpperCase() + d.slice(1)}. Ваш проект — ещё одна клетка. Я не хочу быть её частью.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Я занят тем, что разбираюсь, кто я без этого контракта.`,
+          (d) => `Не сегодня. ${d.charAt(0).toUpperCase() + d.slice(1)}.`
+        ],
+        colleague: [
+          (d) => `Перенесём. ${d.charAt(0).toUpperCase() + d.slice(1)}. Устал притворяться, что мне интересно.`,
+          (d) => `Не сегодня. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я вспоминаю, кем был до этой работы.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Давай в другой раз. Этот — уже не наш.`
+        ],
+        teacher: [
+          (d) => `Перенесём. ${d.charAt(0).toUpperCase() + d.slice(1)}. Оценка — иллюзия, знание — реально.`,
+          (d) => `Не сегодня. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я разбираюсь, зачем мне этот предмет.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Этот день — для системы, а я не для системы.`
+        ],
+        friend: [
+          (d) => `Перенесём. ${d.charAt(0).toUpperCase() + d.slice(1)}. Хочу видеться, когда буду whole, а не half.`,
+          (d) => `Не сегодня. ${d.charAt(0).toUpperCase() + d.slice(1)}. Вспоминаю, кто я вне нашей тусовки.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Давай в другой раз. Этот — не наш.`
+        ],
+        partner: [
+          (d) => `Перенесём. ${d.charAt(0).toUpperCase() + d.slice(1)}. Хочу быть с тобой, когда буду whole, а не half.`,
+          (d) => `Не сегодня. ${d.charAt(0).toUpperCase() + d.slice(1)}. Вспоминаю, кто я вне наших отношений.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Давай в другой раз. Мы — не система.`
+        ]
+      },
+      refuse: {
+        boss: [
+          (d) => `Нет. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я отказываюсь участвовать в этой гонке.`,
+          (d) => `Отказываюсь. ${d.charAt(0).toUpperCase() + d.slice(1)}. Мой ответ — не "нет задаче". Это "нет системе".`,
+          (d) => `Не буду. ${d.charAt(0).toUpperCase() + d.slice(1)}. Лишь утратив всё, мы обретаем свободу.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Нет. И не проси объяснить.`
+        ],
+        client: [
+          (d) => `Нет. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я больше не продаю время за вещи, которые мне не нужны.`,
+          (d) => `Отказываюсь. ${d.charAt(0).toUpperCase() + d.slice(1)}. Вы — ещё одна иллюзия, от которой я освобождаюсь.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Нет. Объяснения — способ слабого оправдаться.`
+        ],
+        colleague: [
+          (d) => `Нет. ${d.charAt(0).toUpperCase() + d.slice(1)}. Обида — способ манипуляции. Я просто не хочу.`,
+          (d) => `Не пойду. ${d.charAt(0).toUpperCase() + d.slice(1)}. Уговоры — насилие над свободой воли.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Пас. Я выбираю себя.`
+        ],
+        teacher: [
+          (d) => `Не пойду. ${d.charAt(0).toUpperCase() + d.slice(1)}. Участие — согласие с правилами. Я не согласен.`,
+          (d) => `Отказываюсь. ${d.charAt(0).toUpperCase() + d.slice(1)}. Вопрос "почему" — способ контроля.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Нет. И не спрашивайте.`
+        ],
+        friend: [
+          (d) => `Не пойду. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я выбираю себя сегодня. В другой раз — да.`,
+          (d) => `Пас. ${d.charAt(0).toUpperCase() + d.slice(1)}. Обида — манипуляция. Я просто не хочу.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Нет. Уговоры — насилие. Я свободен.`
+        ],
+        partner: [
+          (d) => `Не пойду. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я выбираю себя сегодня. В другой раз — твой.`,
+          (d) => `Пас. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я выбираю себя.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Нет. Я свободен, и ты свободна.`
+        ]
+      },
+      missed: {
+        boss: [
+          (d) => `Не сделал. ${d.charAt(0).toUpperCase() + d.slice(1)}. Через сто лет нас обоих не будет, а этот отчёт тем более.`,
+          (d) => `Провалил. ${d.charAt(0).toUpperCase() + d.slice(1)}. Извинения — способ системы заставить тебя чувствовать вину.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Не сделал. Напомни мне смысл — и я сделаю.`,
+          (d) => `Не сделал. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я — больше, чем моя работа.`
+        ],
+        client: [
+          (d) => `Не сделал. ${d.charAt(0).toUpperCase() + d.slice(1)}. Хотите результат — ждите. Не хотите — найдите другого раба.`,
+          (d) => `Провалил. ${d.charAt(0).toUpperCase() + d.slice(1)}. Это просто работа. А я — больше, чем моя работа.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Не сделал. Напомните — и, может быть, сделаю.`
+        ],
+        colleague: [
+          (d) => `Забыл. ${d.charAt(0).toUpperCase() + d.slice(1)}. Память — иллюзия. Сейчас сделаю.`,
+          (d) => `Не сделал. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я просто исправлю.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Провалил. Но это не делает меня плохим. Это делает меня человеком.`
+        ],
+        teacher: [
+          (d) => `Не сделал. ${d.charAt(0).toUpperCase() + d.slice(1)}. Задание не имело смысла. Но если важно — сделаю.`,
+          (d) => `Провалил. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я не мой результат. Я больше, чем любая оценка.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Не сдал. Напомните, зачем учусь.`
+        ],
+        friend: [
+          (d) => `Забыл. ${d.charAt(0).toUpperCase() + d.slice(1)}. Сейчас исправлю, брат.`,
+          (d) => `Не сделал. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я просто исправлю.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Провалил. Но это делает меня человеком, не плохим другом.`
+        ],
+        partner: [
+          (d) => `Забыл. ${d.charAt(0).toUpperCase() + d.slice(1)}. Любовь — реальна. Сейчас исправлю.`,
+          (d) => `Не сделал. ${d.charAt(0).toUpperCase() + d.slice(1)}. Я исправлю, потому что ты важна.`,
+          (d) => `${d.charAt(0).toUpperCase() + d.slice(1)}. Провалил. Но это не делает меня плохим партнёром.`
+        ]
+      }
+    }
+  };
+
+  // ===== ЦИТАТЫ И ЗАДАНИЯ ТАЙЛЕРА =====
+  const tylerQuotes = [
+    'Ты — это не твоё храни. Ты — это не твой банковский счёт.',
+    'Лишь утратив всё до конца, мы обретаем свободу.',
+    'Мы — поколение мужчин, воспитанных женщинами.',
+    'Самосовершенствование — это онанизм. А вот саморазрушение...',
+    'Вещи, которыми ты владеешь, в конце концов начинают владеть тобой.',
+    'Если ты не знаешь, чего хочешь — ты acabarás с тем, что у тебя есть.',
+    'Ранние версии себя — это не ошибки. Это черновики.',
+    'Будь моим зеркалом, а не моей тенью.',
+    'Ты спишь. Я — тот, кто тебя разбудит.',
+    'Только после того, как мы всё потеряли, мы свободны делать всё, что угодно.',
+    'Я выгляжу так, как ты хочешь выглядеть. Я трахаюсь так, как ты хочешь трахаться.',
+    'Ты не особенный. Ты — такая же органическая материя, что и всё остальное.',
+    'Самозабвение лучше самосовершенствования.',
+    'Брось идею совершенства. Развейся. Пусть плохое случится.',
+    'Работа, которую ты делаешь, не определяет тебя.'
+  ];
+
+  const tylerTasks = [
+    'Удали одно приложение, которое крадёт твоё время. Прямо сейчас. Не думай.',
+    'Напиши человеку, которого давно не вспоминал. Не ради выгоды. Ради того, чтобы вспомнить, что ты жив.',
+    'Выйди на улицу без телефона. На 30 минут. Посмотри, что останется от тебя.',
+    'Сделай то, что откладывал неделю. Не ради результата. Ради того, чтобы перестать быть рабом.',
+    'Позвони родителям. Не потому что должен. А потому что они стареют.',
+    'Напиши на листе 10 вещей, которые тебя бесят. Сожги лист. Смотри, как горит.',
+    'Сделай одно доброе дело анонимно. Никогда никому не рассказывай.',
+    'Выключи все уведомления на 24 часа. Посмотри, кто действительно хочет с тобой говорить.',
+    'Купи кофе незнакомцу. Не ради лайка. Ради того, чтобы почувствовать, что ты жив.',
+    'Ляг спать на час раньше. Не ради продуктивности. Ради себя.',
+    'Пройди 10000 шагов. Без музыки. Без подкастов. Только ты и дорога.',
+    'Напиши от руки письмо. Не в мессенджере. На бумаге. Отправь по почте.',
+    'Посмотри в зеркало 5 минут. Не оценивай. Просто смотри.',
+    'Откажись от одной вещи, которая тебе не нужна. Прямо сейчас.',
+    'Сделай то, чего боишься. Маленький шаг. Но сделай.'
+  ];
+
+  // ===== ГЕНЕРАЦИЯ =====
+  function generateExcuse(theme, recipient, goal, reason) {
+    const reasonCategory = analyzeReason(reason);
+    const details = reasonDetails[reasonCategory][theme];
+    const detail = pick(details);
+    const time = rand(10, 60);
+    
+    const templatePool = templates[theme][goal][recipient];
+    const template = pick(templatePool);
+    
+    const text = template(detail, time);
+    
+    // Индекс убедительности
+    let credibility;
+    if (theme === 'corporate') {
+      // Зависит от категории причины
+      const credByCategory = {
+        'health': [88, 98], 'transport': [80, 92], 'family': [85, 95],
+        'sleep': [65, 80], 'party': [75, 90], 'games': [55, 75],
+        'mood': [60, 78], 'honest': [45, 65], 'custom': [65, 85], 'unknown': [65, 85]
+      };
+      const [min, max] = credByCategory[reasonCategory];
+      credibility = rand(min, max);
+    } else {
+      // В режиме Тайлера — "шанс быть понятым"
+      const credByCategory = {
+        'health': [55, 75], 'family': [60, 80], 'transport': [40, 60],
+        'sleep': [15, 35], 'party': [10, 30], 'games': [10, 25],
+        'mood': [35, 55], 'honest': [5, 20], 'custom': [15, 35], 'unknown': [15, 35]
+      };
+      const [min, max] = credByCategory[reasonCategory];
+      credibility = rand(min, max);
+    }
+    
+    return { text, credibility };
+  }
+
+  // ===== ОБРАБОТКА КНОПКИ =====
+  const generateBtn = document.getElementById('generateBtn');
+  const results = document.getElementById('results');
+
+  generateBtn.addEventListener('click', () => {
+    const theme = html.getAttribute('data-theme');
+    const recipient = document.getElementById('recipient').value;
+    const goal = document.getElementById('goal').value;
+    const realReason = document.getElementById('realReason').value.trim();
+
+    results.classList.remove('hidden');
+    results.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);">Генерирую...</div>';
+
+    setTimeout(() => {
+      const variants = [
+        generateExcuse(theme, recipient, goal, realReason),
+        generateExcuse(theme, recipient, goal, realReason),
+        generateExcuse(theme, recipient, goal, realReason)
+      ];
+
+      let html_content = '';
+      const labels = theme === 'corporate'
+        ? ['Официальный', 'Сбалансированный', 'Мягкий']
+        : ['ФИЛОСОФСКИЙ', 'ДЕРЗКИЙ', 'РАДИКАЛЬНЫЙ'];
+
+      variants.forEach((item, i) => {
+        const credLabel = theme === 'corporate'
+          ? `Убедительность: ${item.credibility}%`
+          : `Шанс быть понятым: ${item.credibility}%`;
+
+        html_content += `
+          <div class="result-card">
+            <div class="result-label">${labels[i]} вариант</div>
+            <div class="result-text">${item.text}</div>
+            <div class="result-footer">
+              <span class="credibility">${credLabel}</span>
+              <button class="copy-btn" data-text="${item.text.replace(/"/g, '&quot;')}">Копировать</button>
+            </div>
+          </div>
+        `;
+      });
+
+      if (theme === 'tyler') {
+        const quote = pick(tylerQuotes);
+        html_content += `<div class="tyler-quote">${quote}</div>`;
+
+        const task = pick(tylerTasks);
+        html_content += `
+          <div class="tyler-task">
+            <div class="tyler-task-title">🥊 Домашнее задание от Тайлера</div>
+            <div class="tyler-task-text">${task}</div>
+          </div>
+        `;
+      }
+
+      html_content += '<div class="regen-hint">Не нравится? Нажми ещё раз — каждый вариант уникален</div>';
+
+      results.innerHTML = html_content;
+
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          navigator.clipboard.writeText(btn.dataset.text);
+          btn.textContent = '✓ Скопировано';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = 'Копировать';
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+    }, 300);
+  });
+</script>
+
+</body>
+</html>
